@@ -1,44 +1,24 @@
 #include <iostream>
-#include "myComplex.h"
+#include <cmath>
+#include "RootFinding.hpp"
+
 using namespace std;
 
 int main()
 {
-    float r1, i1, r2, i2;
+    cout << "Bisection Method for f(x) = 4x^3 - 3x\n";
 
-    cout << "Enter real part and imaginary part of first complex number: ";
-    cin >> r1 >> i1;
+    double a = 0.5;
+    double b = 1.0;
+    double tol = 0.0001;
 
-    cout << "Enter real part and imaginary part of second complex number: ";
-    cin >> r2 >> i2;
+    // Create object of class
+    RootFinding obj;
 
-    myComplex c1(r1, i1);
-    myComplex c2(r2, i2);
-    myComplex c3;
+    double root = obj.bisection(a, b, tol);
 
-    cout << "\nC1 = ";
-    c1.display();
-
-    cout << "\nC2 = ";
-    c2.display();
-
-    c3 = c1.add(c2);
-    cout << "\n\nAddition = ";
-    c3.display();
-
-    c3 = c1.multiply(c2);
-    cout << "\nMultiplication = ";
-    c3.display();
-
-    c3 = c1.divide(c2);
-    cout << "\nDivision = ";
-    c3.display();
-
-    c3 = c1.conjugate();
-    cout << "\nConjugate of first complex number = ";
-    c3.display();
-
-    cout << "\nNorm of first complex number = " << c1.norm() << endl;
+    if (!isnan(root))
+        cout << "Approximate Root: " << root << endl;
 
     return 0;
 }
