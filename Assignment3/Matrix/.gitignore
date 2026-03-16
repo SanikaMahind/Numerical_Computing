@@ -1,0 +1,13 @@
+# object files
+*.o
+
+# static libraries
+*.a
+
+# executable file
+solver
+app
+
+# generated output files
+resultmatrix.txt
+resultvector.txt
