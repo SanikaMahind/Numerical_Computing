@@ -1,11 +1,11 @@
 #include "../include/matrix.hpp"
 #include <cmath>       
 #include <stdexcept>   
+#include <algorithm>
 
 
-Matrix::Matrix() : rows(0), cols(0) {}             // Default constructor: creates an empty matrix with 0 rows and co
+Matrix::Matrix() : rows(0), cols(0) {}             // Default constructor: creates an empty matrix with 0 rows and cols
 Matrix::Matrix(int r, int c) : rows(r), cols(c)    // Parameterized constructor: creates a matrix with r rows and c columns, all initialized to 0
-
 {
     data.resize(rows, std::vector<double>(cols, 0));        // resize 2D vector
 }
@@ -20,7 +20,6 @@ Matrix::Matrix(const Matrix &m)                         // Copy constructor: cre
 
 
 // Read matrix from a file: first row=rows, second=cols, then matrix elements
-
 void Matrix::readFromFile(std::ifstream &fin)
 {
     fin >> rows >> cols;
@@ -42,7 +41,6 @@ void Matrix::displayToFile(std::ofstream &fout) const
 }
 
 
-
 // Access or modify element at (i,j)
 double &Matrix::operator()(int i, int j) { return data[i][j]; }
 
@@ -53,10 +51,10 @@ double Matrix::operator()(int i, int j) const { return data[i][j]; }
 // Matrix addition: element-wise
 Matrix Matrix::operator+(const Matrix &m) const
 {
-    Matrix result(rows, cols);                   // create result matrix
+    Matrix result(rows, cols);
     for (int i = 0; i < rows; i++)
         for (int j = 0; j < cols; j++)
-            result(i,j) = data[i][j] + m(i,j);  // sum corresponding elements
+            result(i,j) = data[i][j] + m(i,j);
     return result;
 }
 
@@ -70,29 +68,27 @@ Matrix Matrix::operator-(const Matrix &m) const
     return result;
 }
 
-// Matrix multiplication (rows x cols * cols x m.cols)
+// Matrix multiplication
 Matrix Matrix::operator*(const Matrix &m) const
 {
-    Matrix result(rows, m.cols);           // result has same rows as this and columns as m
+    Matrix result(rows, m.cols);
     for (int i = 0; i < rows; i++)
         for (int j = 0; j < m.cols; j++)
             for (int k = 0; k < cols; k++)
-                result(i,j) += data[i][k] * m(k,j);  // dot product of row i with column j
+                result(i,j) += data[i][k] * m(k,j);
     return result;
 }
 
 
-
-// Check if two matrices are equal (same size + same elements(compaire))
+// Check if two matrices are equal
 bool Matrix::operator==(const Matrix &m) const
 {
-    if (rows != m.rows || cols != m.cols) return false;  // size mismatch
+    if (rows != m.rows || cols != m.cols) return false;
     for (int i = 0; i < rows; i++)
         for (int j = 0; j < cols; j++)
-            if (data[i][j] != m(i,j)) return false;    // element mismatch
+            if (data[i][j] != m(i,j)) return false;
     return true;
 }
-
 
 
 // Read matrix from standard input or file stream
@@ -117,7 +113,6 @@ std::ostream &operator<<(std::ostream &out, const Matrix &m)
     }
     return out;
 }
-
 
 
 // Check if matrix is square
@@ -173,8 +168,8 @@ bool Matrix::isDiagonallyDominant() const
     {
         double sum = 0;
         for (int j = 0; j < cols; j++)
-            if (i != j) sum += std::abs(data[i][j]);  // sum of non-diagonal elements in row
-        if (std::abs(data[i][i]) < sum) return false;  // diagonal element must be >= sum
+            if (i != j) sum += std::abs(data[i][j]);
+        if (std::abs(data[i][i]) < sum) return false;
     }
     return true;
 }
@@ -182,10 +177,10 @@ bool Matrix::isDiagonallyDominant() const
 // Return transpose of matrix
 Matrix Matrix::transpose() const
 {
-    Matrix t(cols, rows);  // swap rows and cols
+    Matrix t(cols, rows);
     for (int i = 0; i < rows; i++)
         for (int j = 0; j < cols; j++)
-            t(j,i) = data[i][j];  // swap indices
+            t(j,i) = data[i][j];
     return t;
 }
 
@@ -195,6 +190,37 @@ bool Matrix::isTranspose(const Matrix &m) const
     return transpose() == m;
 }
 
+// Rearrange rows so that diagonal elements dominate each row.
+// Returns true if successful, false if not possible.
+bool Matrix::makeDiagonallyDominant()
+{
+    if (!isSquare()) return false;
+    int n = rows;
+
+    // For each row i, find a row r >= i whose element in column i has the largest absolute value
+    for (int i = 0; i < n; i++)
+    {
+        // Find best pivot row for column i (largest |element| in column i among rows i..n-1)
+        int bestRow = i;
+        double bestVal = std::abs(data[i][i]);
+
+        for (int r = i + 1; r < n; r++)
+        {
+            if (std::abs(data[r][i]) > bestVal)
+            {
+                bestVal = std::abs(data[r][i]);
+                bestRow = r;
+            }
+        }
+
+        // Swap row i with bestRow
+        if (bestRow != i)
+            std::swap(data[i], data[bestRow]);
+    }
+
+    // Verify it is now diagonally dominant
+    return isDiagonallyDominant();
+}
 
 
 double Matrix::determinant() const       // Recursive determinant calculation (Laplace expansion)
@@ -212,12 +238,12 @@ double Matrix::determinant() const       // Recursive determinant calculation (L
             int colIndex = 0;
             for (int j = 0; j < cols; j++)
             {
-                if (j == p) continue;               // skip current column
-                sub(i-1,colIndex) = data[i][j];    // copy remaining elements to submatrix
+                if (j == p) continue;
+                sub(i-1,colIndex) = data[i][j];
                 colIndex++;
             }
         }
-        det += pow(-1, p) * data[0][p] * sub.determinant();  // recursive Laplace expansion
+        det += pow(-1, p) * data[0][p] * sub.determinant();
     }
     return det;
 }

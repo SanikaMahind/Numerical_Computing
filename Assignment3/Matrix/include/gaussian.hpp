@@ -10,11 +10,12 @@ class GaussianElimination : public LinearSystem
 public:
     GaussianElimination() = default;
 
-    // override virtual function from LinearSystem
+    // Override virtual function from LinearSystem
     void solve() override;
 
 private:
-    void saveSolutionToFile(const std::vector<double>& solution);
+    void saveSolutionToFile(const std::vector<double> &solution);
+    void printSolutionToConsole(const std::vector<double> &solution);
 };
 
 #endif

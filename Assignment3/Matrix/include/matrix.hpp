@@ -54,10 +54,9 @@ public:
     bool isTranspose(const Matrix &m) const;    // Checks if current matrix is the transpose of another
 
     // Utility functions 
-    void makeDiagonallyDominant();               // Rearrange matrix to make it diagonally dominant (if possible)
+    bool makeDiagonallyDominant();               // Rearrange rows to make diagonally dominant (returns false if impossible)
     Matrix transpose() const;                    // Returns the transpose of the matrix
     double determinant() const;                  // Computes determinant (recursive for n>2)
-    Matrix inverse() const;                      // Computes the inverse of the matrix (if invertible)
 };
 
 #endif

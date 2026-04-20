@@ -6,27 +6,19 @@ using namespace std;
 
 int main()
 {
+    cout << "Bisection Method for f(x) = 4x^3 - 3x\n";
+
     double a = 0.5;
     double b = 1.0;
     double tol = 0.0001;
 
-    // Bisection
-    cout << "\n--- Bisection Method ---\n";
-    Bisection bisection;
-    double root1 = bisection.solve(a, b, tol);
-    cout << "Root: " << root1 << endl;
+    // Create object of class
+    Bisection obj;
 
-    // Newton Raphson
-    cout << "\n--- Newton Raphson Method ---\n";
-    NewtonRaphson newton;
-    double root2 = newton.solve(1.0, 0, tol);   // start from 1
-    cout << "Root: " << root2 << endl;
+    double root = obj.solve(a, b, tol);
 
-    // Fixed Point
-    cout << "\n--- Fixed Point Method ---\n";
-    FixedPoint fp;
-    double root3 = fp.solve(0.5, 0, tol);
-    cout << "Root: " << root3 << endl;
+    if (!isnan(root))
+        cout << "Approximate Root: " << root << endl;
 
     return 0;
 }
